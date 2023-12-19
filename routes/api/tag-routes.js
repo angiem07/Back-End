@@ -42,7 +42,7 @@ router.get('/:id', async (req, res) => {
     });
 
     if (!tag) {
-      res.status(404).json({ message: 'No Tag found with this id!' });
+      res.status(404).json({ message: 'Tag id not found.' });
       return;
     }
 
@@ -72,12 +72,12 @@ router.put('/:id', async (req, res) => {
 
     if (numAffectedRows === 0) {
       res.status(404).json({
-        message: 'No Tag found with this id, so category name update could not be completed',
+        message: 'Tag id not found. Catergory could not be udated.',
       });
       return;
     }
 
-    res.json({ message: 'Tag updated successfully' });
+    res.json({ message: 'Tag updated successfully.' });
   } catch (error) {
     handleError(res, error, 400);
   }
@@ -90,7 +90,7 @@ router.delete('/:id', async (req, res) => {
     });
 
     if (numAffectedRows === 0) {
-      res.status(404).json({ message: 'No Tag found with this id' });
+      res.status(404).json({ message: 'Tag id not found.' });
       return;
     }
 
