@@ -1,94 +1,102 @@
 const router = require('express').Router();
-const { Tag, Product, ProductTag } = require('../../models');
+const { Tag, Product } = require('../../models');
+
+// Centralized error handling function
+const handleError = (res, error, status = 500) => {
+  console.error(error);
+  res.status(status).json({ error: 'Internal server error' });
+};
 
 // The `/api/tags` endpoint
 
 router.get('/', async (req, res) => {
-  // find all tags
-  // be sure to include its associated Product data
   try {
     const tags = await Tag.findAll({
-      include: {
-        model: Product,
-        attributes: ['id', 'product_name', 'price', 'stock'],
-        through: { attributes: [] }, // Exclude ProductTag attributes
-      },
+      attributes: ['id', 'tag_name'],
+      include: [
+        {
+          model: Product,
+          as: 'product_tags',
+          attributes: ['id', 'product_name', 'price', 'stock'],
+        },
+      ],
     });
-    res.status(200).json(tags);
+    res.json(tags);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    handleError(res, error);
   }
 });
 
 router.get('/:id', async (req, res) => {
-  // find a single tag by its `id`
-  // be sure to include its associated Product data
   try {
-    const tag = await Tag.findByPk(req.params.id, {
-      include: {
-        model: Product,
-        attributes: ['id', 'product_name', 'price', 'stock'],
-        through: { attributes: [] }, // Exclude ProductTag attributes
-      },
+    const tag = await Tag.findOne({
+      where: { id: req.params.id },
+      attributes: ['id', 'tag_name'],
+      include: [
+        {
+          model: Product,
+          as: 'product_tags',
+          attributes: ['id', 'product_name', 'price', 'stock'],
+        },
+      ],
     });
 
     if (!tag) {
-      return res.status(404).json({ error: 'Tag not found' });
+      res.status(404).json({ message: 'No Tag found with this id!' });
+      return;
     }
 
-    res.status(200).json(tag);
+    res.json(tag);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    handleError(res, error);
   }
 });
 
 router.post('/', async (req, res) => {
-  // create a new tag
   try {
-    const newTag = await Tag.create(req.body);
-    res.status(201).json(newTag);
+    const newTag = await Tag.create({
+      tag_name: req.body.tag_name,
+    });
+    res.json(newTag);
   } catch (error) {
-    console.error(error);
-    res.status(400).json({ error: 'Bad request' });
+    handleError(res, error, 400);
   }
 });
 
 router.put('/:id', async (req, res) => {
-  // update a tag's name by its `id` value
   try {
-    const [numAffectedRows, updatedTags] = await Tag.update(req.body, {
-      where: { id: req.params.id },
-      returning: true, // Get the updated tag data
-    });
+    const [numAffectedRows] = await Tag.update(
+      { tag_name: req.body.tag_name },
+      { where: { id: req.params.id } }
+    );
 
     if (numAffectedRows === 0) {
-      return res.status(404).json({ error: 'Tag not found' });
+      res.status(404).json({
+        message: 'No Tag found with this id, so category name update could not be completed',
+      });
+      return;
     }
 
-    res.status(200).json(updatedTags[0]);
+    res.json({ message: 'Tag updated successfully' });
   } catch (error) {
-    console.error(error);
-    res.status(400).json({ error: 'Bad request' });
+    handleError(res, error, 400);
   }
 });
 
 router.delete('/:id', async (req, res) => {
-  // delete a tag by its `id` value
   try {
     const numAffectedRows = await Tag.destroy({
       where: { id: req.params.id },
     });
 
     if (numAffectedRows === 0) {
-      return res.status(404).json({ error: 'Tag not found' });
+      res.status(404).json({ message: 'No Tag found with this id' });
+      return;
     }
 
-    res.status(200).json({ message: 'Tag deleted successfully' });
+    res.json({ message: 'Tag deleted successfully' });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    handleError(res, error);
   }
 });
 
