@@ -7,7 +7,7 @@ This back end with the latestes technologies was created for internet ratail com
 ## Usage
 To run the back-end e-commerce first clone the repo locally. \
 Open the repo in VSCode and open the terminal. \
-Before starting make sure you have MySQL and Sequelize installed. 
+Before starting make sure you have MySQL and Sequelize packages in Node.js installed. 
 
 To start enter mysql -r root -p to the termial, enter password if needed. \
 Then run the schema file, with the source db_name command. \
