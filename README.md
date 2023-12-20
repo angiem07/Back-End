@@ -6,6 +6,12 @@ This back end with the latestes technologies was created for internet ratail com
 
 ## Usage
 
+See video walkthrough:
+
+https://github.com/angiem07/Back-End/assets/143362421/c2b733b5-e5ae-4da7-a32a-137415e81a13
+
+
+
 ## Credits
 
 
