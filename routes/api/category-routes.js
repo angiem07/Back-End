@@ -1,6 +1,11 @@
 const router = require('express').Router();
 const { Category, Product } = require('../../models');
 
+const handleError = (res, error, status = 500) => {
+  console.error(error);
+  res.status(status).json({ error: 'Internal server error' });
+};
+
 // The `/api/categories` endpoint
 
 router.get('/', async (req, res) => {
@@ -89,7 +94,7 @@ router.delete('/:id', async (req, res) => {
       return;
     }
 
-    res.status(200).json({ message: 'Category deleted successfully' });
+    res.status(200).json({ message: 'Category deleted successfully.' });
   } catch (error) {
     handleError(res, error);
   }

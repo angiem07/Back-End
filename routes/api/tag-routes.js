@@ -94,7 +94,7 @@ router.delete('/:id', async (req, res) => {
       return;
     }
 
-    res.json({ message: 'Tag deleted successfully' });
+    res.json({ message: 'Tag deleted successfully.' });
   } catch (error) {
     handleError(res, error);
   }
